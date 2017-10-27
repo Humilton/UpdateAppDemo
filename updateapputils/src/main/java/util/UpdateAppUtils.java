@@ -17,6 +17,8 @@ import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
+import android.content.Intent;
+import android.net.Uri;
 
 import customview.ConfirmDialog;
 import feature.Callback;
@@ -32,13 +34,14 @@ public class UpdateAppUtils {
     public static final int CHECK_BY_VERSION_CODE = 1002;
     public static final int DOWNLOAD_BY_APP = 1003;
     public static final int DOWNLOAD_BY_BROWSER = 1004;
+    public static final int JUMP_TO_BROWSER = 1005;
 
-    private Activity activity;
+    protected Activity activity;
     private int checkBy = CHECK_BY_VERSION_CODE;
     private int downloadBy = DOWNLOAD_BY_APP;
     private int serverVersionCode = 0;
-    private String apkPath="";
-    private String serverVersionName="";
+    protected String apkPath="";
+    protected String serverVersionName="";
     private boolean isForce = false; //是否强制更新
     private int localVersionCode = 0;
     private String localVersionName="";
@@ -46,7 +49,7 @@ public class UpdateAppUtils {
     private String updateInfo = "";
 
 
-    private UpdateAppUtils(Activity activity) {
+    protected UpdateAppUtils(Activity activity) {
         this.activity = activity;
         getAPPLocalVersion(activity);
     }
@@ -156,24 +159,19 @@ public class UpdateAppUtils {
                         break;
 
                     case 1:  //sure
-                        if (downloadBy == DOWNLOAD_BY_APP) {
-                            if (isWifiConnected(activity)){
-                                DownloadAppUtils.downloadForAutoInstall(activity, apkPath, "demo.apk", serverVersionName);
-                            }else {
-                                new ConfirmDialog(activity, new Callback() {
-                                    @Override
-                                    public void callback(int position) {
-                                        if (position==1){
-                                            DownloadAppUtils.downloadForAutoInstall(activity, apkPath, "demo.apk", serverVersionName);
-                                        }else {
-                                            if (isForce)activity.finish();
-                                        }
+                        if (!isWifiConnected(activity)) {
+                            new ConfirmDialog(activity, new Callback() {
+                                @Override
+                                public void callback(int position) {
+                                    if (position==1){
+                                        handleDownload(downloadBy);
+                                    }else {
+                                        if (isForce)activity.finish();
                                     }
-                                }).setContent("目前手机不是WiFi状态\n确认是否继续下载更新？").show();
-                            }
-
-                        }else if (downloadBy == DOWNLOAD_BY_BROWSER){
-                            DownloadAppUtils.downloadForWebView(activity,apkPath);
+                                }
+                            }).setContent("目前手机不是WiFi状态\n确认是否继续下载更新？").show();
+                        }else {
+                            handleDownload(downloadBy);
                         }
                         break;
                 }
@@ -188,8 +186,19 @@ public class UpdateAppUtils {
         dialog.setCancelable(false);
         dialog.show();
     }
-
-
+    
+    protected void handleDownload(int downloadBy) {
+        if(downloadBy == DOWNLOAD_BY_APP) {
+            DownloadAppUtils.downloadForAutoInstall(activity, apkPath, "demo.apk", serverVersionName);
+        }
+        else if(downloadBy == DOWNLOAD_BY_BROWSER) {
+            DownloadAppUtils.downloadForWebView(activity,apkPath);
+        }
+        else if(downloadBy == JUMP_TO_BROWSER) {
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(apkPath));
+            activity.startActivity(browserIntent);
+        }
+    }
 
 
     //尝试在内部适配6.0 可能会引起内存泄露
