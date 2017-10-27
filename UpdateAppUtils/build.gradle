@@ -43,7 +43,7 @@ version = "1.3"
 
 def siteUrl = 'https://github.com/teprinciple/UpdateAppDemo'      // 项目的主页
 def gitUrl = 'https://github.com/teprinciple/UpdateAppDemo.git'   // Git仓库的url
-group = "win.yaoping"          // Maven Group ID for the artifact，一般填你唯一的包名
+group = "com.github.Humilton"          // Maven Group ID for the artifact，一般填你唯一的包名
 install {
     repositories.mavenInstaller {
         // This generates POM.file_paths with proper parameters

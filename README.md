@@ -8,9 +8,20 @@
 
 ## 集成
 compile引入
+### Step 1. Add the JitPack repository to your build file
+```
+allprojects {
+    repositories {
+        ...
+        maven { url 'https://jitpack.io' }
+    }
+}
+```
+
+### Step 2. Add the dependency
 ```
 dependencies {
-    compile 'com.teprinciple:updateapputils:1.3.1'
+    compile 'com.github.Humilton:UpdateAppDemo:1.0'
 }
 ```
 
@@ -75,6 +86,8 @@ UpdateAppUtils.from(this)
     DOWNLOAD_BY_APP：通过App下载
 
     DOWNLOAD_BY_BROWSER：通过手机浏览器下载
+    
+    JUMP_TO_BROWSER：跳转手机浏览器
 
 ```
 
