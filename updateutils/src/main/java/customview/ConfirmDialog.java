@@ -17,9 +17,9 @@ import teprinciple.updateapputils.R;
 public class ConfirmDialog extends Dialog {
 
     Callback callback;
-    private TextView content;
-    private TextView sureBtn;
-    private TextView cancleBtn;
+    protected TextView content;
+    protected TextView sureBtn;
+    protected TextView cancleBtn;
 
     public ConfirmDialog(Context context, Callback callback) {
         super(context, R.style.CustomDialog);
