@@ -21,7 +21,7 @@ allprojects {
 ### Step 2. Add the dependency
 ```
 dependencies {
-    compile 'com.github.Humilton:UpdateAppDemo:1.3'
+    compile 'com.github.Humilton:UpdateAppDemo:1.5'
 }
 ```
 
@@ -41,6 +41,54 @@ dependencies {
                 .serverVersionName("2.0") //服务器versionName
                 .apkPath(apkPath) //最新apk下载地址
                 .update();
+```
+
+#### fork后代码使用：
+测试强制更新
+```
+
+private static class ExtUpdateAppUtils extends UpdateAppUtils {
+
+        protected ExtUpdateAppUtils(Activity activity) {
+            super(activity);
+        }
+
+        public static UpdateAppUtils from(Activity activity) {
+            return new ExtUpdateAppUtils(activity);
+        }
+
+        @Override
+        protected void exitApp() {
+            ActivityManager.getAppManager().AppExit();
+        }
+    }
+    
+public static void handleUpdate(args...)(
+
+    UpdateAppUtils mUtil0 = ExtUpdateAppUtils.from(mContext)
+            .serverVersionName("3.01")
+            .checkBy(CHECK_BY_VERSION_NAME)
+            .isForce(true);
+    mUtil0.update();
+}
+```
+
+发布环境使用：
+```
+UpdateAppUtils mUtil = ExtUpdateAppUtils.from(mContext)
+            .serverVersionName(versionRes.getVersionCode() + "")
+            .checkBy(CHECK_BY_VERSION_NAME)
+            .isForce(forceUpdate == VersionCheckBean.VersionRes.FORCE_UPDATE) ;
+    if (!StringUtil.isEmpty(apkPath)) {     // 下载APK地址
+        mUtil.apkPath(apkPath).downloadBy(UpdateAppUtils.DOWNLOAD_BY_BROWSER).update();
+    } else {
+        apkPath = versionRes.getDownUrl();     //下载网页
+        if (!StringUtil.isEmpty(apkPath)) {
+            mUtil.apkPath(apkPath).downloadBy(UpdateAppUtils.JUMP_TO_BROWSER).update();
+        } else {
+            ToastUtils.show(mContext, CommonUtils.getString(R.string.failed_to_obtain_setup_package_please_try_again_later));
+        }
+    }
 ```
 
 #### Kotlin代码调用完全一样
