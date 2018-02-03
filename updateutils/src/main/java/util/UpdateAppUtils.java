@@ -148,14 +148,18 @@ public class UpdateAppUtils {
 //        }
 
     }
-
+    
+    protected void exitApp() {
+        System.exit(1);
+    }
+    
     private void realUpdate() {
         ConfirmDialog dialog = new ConfirmDialog(activity, new Callback() {
             @Override
             public void callback(int position) {
                 switch (position){
                     case 0:  //cancle
-                        if (isForce)System.exit(0);
+                        if (isForce)  exitApp();
                         break;
 
                     case 1:  //sure
